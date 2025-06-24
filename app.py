@@ -63,8 +63,11 @@ with col1:
     radius = st.number_input("Effective radius of pulley ({}):".format("m" if use_metric else "in"), min_value=0.0)
 with col2:
     drop_height = st.number_input("Vertical drop height ({}):".format("m" if use_metric else "ft"), min_value=0.0)
-    fall_minutes = st.number_input("Drop time (minutes):", min_value=0.0, step=1.0)
-    fall_seconds = st.number_input("Drop time (seconds):", min_value=0.0, step=0.1)
+    col_d1, col_d2 = st.columns([1, 1])
+    with col_d1:
+        fall_minutes = st.number_input("Drop time – Minutes:", min_value=0.0, step=1.0, key="fall_minutes")
+    with col_d2:
+        fall_seconds = st.number_input("Drop time – Seconds:", min_value=0.0, step=0.1, key="fall_seconds")
     fall_time_s = time_to_seconds(fall_minutes, fall_seconds)
 
 st.header("② Coast-Down Test: Measure Frictional Loss")
@@ -79,8 +82,11 @@ with col3:
     rpm1 = st.number_input("Start RPM (before coast-down):", min_value=0.0)
 with col4:
     rpm2 = st.number_input("End RPM (after coast-down):", min_value=0.0)
-coast_minutes = st.number_input("Coast-down time (minutes):", min_value=0.0, step=1.0)
-coast_seconds = st.number_input("Coast-down time (seconds):", min_value=0.0, step=0.1)
+col_c1, col_c2 = st.columns([1, 1])
+with col_c1:
+    coast_minutes = st.number_input("Coast-down time – Minutes:", min_value=0.0, step=1.0, key="coast_minutes")
+with col_c2:
+    coast_seconds = st.number_input("Coast-down time – Seconds:", min_value=0.0, step=0.1, key="coast_seconds")
 coast_time_s = time_to_seconds(coast_minutes, coast_seconds)
 
 if st.button("✅ Calculate"):
