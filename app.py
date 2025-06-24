@@ -39,8 +39,12 @@ def calculate_correction_factor(T_f, I, alpha):
         return 1.0
     return 1 + (T_f / (I * alpha))
 
-def time_to_seconds(minutes, seconds):
-    return minutes * 60 + seconds
+def parse_time_string(time_str):
+    try:
+        minutes, seconds = map(float, time_str.split(':'))
+        return minutes * 60 + seconds
+    except:
+        return 0
 
 st.set_page_config(page_title="MOI & Friction Loss Tool", layout="centered")
 st.title("🔧 MOI & Friction Loss Calculator")
@@ -63,12 +67,8 @@ with col1:
     radius = st.number_input("Effective radius of pulley ({}):".format("m" if use_metric else "in"), min_value=0.0)
 with col2:
     drop_height = st.number_input("Vertical drop height ({}):".format("m" if use_metric else "ft"), min_value=0.0)
-    col_d1, col_d2 = st.columns([1, 1])
-    with col_d1:
-        fall_minutes = st.number_input("Drop time – Minutes:", min_value=0.0, step=1.0, key="fall_minutes")
-    with col_d2:
-        fall_seconds = st.number_input("Drop time – Seconds:", min_value=0.0, step=0.1, key="fall_seconds")
-    fall_time_s = time_to_seconds(fall_minutes, fall_seconds)
+    drop_time_str = st.text_input("Drop time (MM:SS format):", value="0:00")
+    fall_time_s = parse_time_string(drop_time_str)
 
 st.header("② Coast-Down Test: Measure Frictional Loss")
 st.markdown("""
@@ -82,12 +82,8 @@ with col3:
     rpm1 = st.number_input("Start RPM (before coast-down):", min_value=0.0)
 with col4:
     rpm2 = st.number_input("End RPM (after coast-down):", min_value=0.0)
-col_c1, col_c2 = st.columns([1, 1])
-with col_c1:
-    coast_minutes = st.number_input("Coast-down time – Minutes:", min_value=0.0, step=1.0, key="coast_minutes")
-with col_c2:
-    coast_seconds = st.number_input("Coast-down time – Seconds:", min_value=0.0, step=0.1, key="coast_seconds")
-coast_time_s = time_to_seconds(coast_minutes, coast_seconds)
+coast_time_str = st.text_input("Coast-down time (MM:SS format):", value="0:00")
+coast_time_s = parse_time_string(coast_time_str)
 
 if st.button("✅ Calculate"):
     try:
