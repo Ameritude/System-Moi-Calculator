@@ -4,14 +4,10 @@ import streamlit as st
 import math
 
 def calculate_moi(mass, radius, drop_height, fall_time_s, use_metric):
-    if use_metric:
-        mass_kg = mass
-        radius_m = radius
-        drop_height_m = drop_height
-    else:
-        mass_kg = mass * 0.453592
-        radius_m = radius * 0.0254
-        drop_height_m = drop_height * 0.3048
+    # Convert all inputs to metric regardless of original unit
+    mass_kg = mass if use_metric else mass * 0.453592
+    radius_m = radius if use_metric else radius * 0.0254
+    drop_height_m = drop_height if use_metric else drop_height * 0.3048
 
     g = 9.81
     a = (2 * drop_height_m) / fall_time_s**2
@@ -29,24 +25,14 @@ def calculate_friction(I, rpm1, rpm2, coast_time_s):
     return alpha_f, T_f
 
 def convert_units(I, T, T_f, a, use_metric):
-    if use_metric:
-        return {
-            "MOI": I,
-            "Torque": T,
-            "Friction Torque": T_f,
-            "Linear Acceleration": a,
-            "MOI Unit": "kg·m²",
-            "Torque Unit": "N·m"
-        }
-    else:
-        return {
-            "MOI": I / 1.35582 * 0.737562149,
-            "Torque": T / 1.35582,
-            "Friction Torque": T_f / 1.35582,
-            "Linear Acceleration": a / 0.3048,
-            "MOI Unit": "slug·ft²",
-            "Torque Unit": "ft·lbf"
-        }
+    return {
+        "MOI": I,
+        "Torque": T,
+        "Friction Torque": T_f,
+        "Linear Acceleration": a,
+        "MOI Unit": "kg·m²",
+        "Torque Unit": "N·m"
+    }
 
 def calculate_correction_factor(T_f, I, alpha):
     if alpha == 0:
@@ -107,14 +93,14 @@ if st.button("✅ Calculate"):
     try:
         I, a, alpha, T = calculate_moi(mass, radius, drop_height, fall_time_s, use_metric)
         alpha_f, T_f = calculate_friction(I, rpm1, rpm2, coast_time_s)
-        converted = convert_units(I, T, T_f, a, use_metric)
+        converted = convert_units(I, T, T_f, a, True)  # Force metric output
         correction_factor = calculate_correction_factor(T_f, I, alpha)
 
         st.markdown("---")
         st.subheader("📊 Drop Test Results")
         st.write(f"• Moment of Inertia: `{converted['MOI']:.4f} {converted['MOI Unit']}`")
         st.write(f"• Torque from Falling Mass: `{converted['Torque']:.3f} {converted['Torque Unit']}`")
-        st.write(f"• Linear Acceleration: `{converted['Linear Acceleration']:.3f} {'m/s²' if use_metric else 'ft/s²'}`")
+        st.write(f"• Linear Acceleration: `{converted['Linear Acceleration']:.3f} m/s²`")
 
         st.subheader("📉 Coast-Down Results")
         st.write(f"• Angular Deceleration: `{alpha_f:.4f} rad/s²`")
@@ -128,8 +114,3 @@ if st.button("✅ Calculate"):
 
     except Exception as e:
         st.error(f"Error during calculation: {e}")
-    except Exception as e:
-        st.error(f"Error during calculation: {e}")
-
-
-
