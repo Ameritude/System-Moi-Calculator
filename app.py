@@ -39,8 +39,8 @@ def calculate_correction_factor(T_f, I, alpha):
         return 1.0
     return 1 + (T_f / (I * alpha))
 
-def minutes_to_seconds(minutes):
-    return minutes * 60
+def time_to_seconds(minutes, seconds):
+    return minutes * 60 + seconds
 
 st.set_page_config(page_title="MOI & Friction Loss Tool", layout="centered")
 st.title("🔧 MOI & Friction Loss Calculator")
@@ -52,11 +52,10 @@ use_metric = unit_system == "Metric (SI)"
 st.header("① Drop Test: Measure Moment of Inertia")
 st.markdown("""
 **Instructions:**
-1. Attach a known mass to your rotating system with a string wound around a pulley (Make sure this pulley does not have a large inertia itself. plastic is best).
+1. Attach a known mass to your rotating system with a string wound around a pulley (or drum).
 2. Measure the radius from the center of rotation to the point where the string pulls.
 3. Measure how far the weight drops (vertical distance).
 4. Time how long it takes for the mass to fall this distance after release.
-5. Repeat this test atleast 3 times and use the averages for the values below
 """)
 col1, col2 = st.columns(2)
 with col1:
@@ -64,12 +63,9 @@ with col1:
     radius = st.number_input("Effective radius of pulley ({}):".format("m" if use_metric else "in"), min_value=0.0)
 with col2:
     drop_height = st.number_input("Vertical drop height ({}):".format("m" if use_metric else "ft"), min_value=0.0)
-    drop_time_unit = st.radio("Drop Time Unit", ["Seconds", "Minutes"], horizontal=True, key="drop_time_unit")
-    if drop_time_unit == "Minutes":
-        fall_minutes = st.number_input("Drop time (min):", min_value=0.0, step=0.1)
-        fall_time_s = minutes_to_seconds(fall_minutes)
-    else:
-        fall_time_s = st.number_input("Drop time (sec):", min_value=0.01)
+    fall_minutes = st.number_input("Drop time (minutes):", min_value=0.0, step=1.0)
+    fall_seconds = st.number_input("Drop time (seconds):", min_value=0.0, step=0.1)
+    fall_time_s = time_to_seconds(fall_minutes, fall_seconds)
 
 st.header("② Coast-Down Test: Measure Frictional Loss")
 st.markdown("""
@@ -83,12 +79,9 @@ with col3:
     rpm1 = st.number_input("Start RPM (before coast-down):", min_value=0.0)
 with col4:
     rpm2 = st.number_input("End RPM (after coast-down):", min_value=0.0)
-coast_time_unit = st.radio("Coast-Down Time Unit", ["Seconds", "Minutes"], horizontal=True, key="coast_time_unit")
-if coast_time_unit == "Minutes":
-    coast_minutes = st.number_input("Coast-down time (min):", min_value=0.0, step=0.1)
-    coast_time_s = minutes_to_seconds(coast_minutes)
-else:
-    coast_time_s = st.number_input("Coast-down time (sec):", min_value=0.01)
+coast_minutes = st.number_input("Coast-down time (minutes):", min_value=0.0, step=1.0)
+coast_seconds = st.number_input("Coast-down time (seconds):", min_value=0.0, step=0.1)
+coast_time_s = time_to_seconds(coast_minutes, coast_seconds)
 
 if st.button("✅ Calculate"):
     try:
