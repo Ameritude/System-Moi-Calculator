@@ -77,10 +77,15 @@ with col1:
     radius = st.number_input("Effective radius of pulley ({}):".format("m" if use_metric else "in"), min_value=0.0)
 with col2:
     drop_height = st.number_input("Vertical drop height ({}):".format("m" if use_metric else "ft"), min_value=0.0)
-    fall_time_s = st.number_input("Time for drop (s):", min_value=0.01)
-    fall_minutes = st.number_input("(Optional) Drop time in minutes:", min_value=0.0, step=0.1)
-    if fall_minutes:
-        st.write(f"→ That equals `{minutes_to_seconds(fall_minutes):.2f}` seconds")
+    col_time_1, col_time_2 = st.columns([1, 2])
+    with col_time_1:
+        drop_time_unit = st.radio("Time unit", ["Seconds", "Minutes"], horizontal=False, label_visibility="collapsed")
+    with col_time_2:
+        if drop_time_unit == "Minutes":
+            fall_minutes = st.number_input("Drop time (min):", min_value=0.0, step=0.1)
+            fall_time_s = minutes_to_seconds(fall_minutes)
+        else:
+            fall_time_s = st.number_input("Drop time (sec):", min_value=0.01)
 
 st.header("② Coast-Down Test: Measure Frictional Loss")
 st.markdown("""
@@ -94,10 +99,15 @@ with col3:
     rpm1 = st.number_input("Start RPM (before coast-down):", min_value=0.0)
 with col4:
     rpm2 = st.number_input("End RPM (after coast-down):", min_value=0.0)
-coast_time_s = st.number_input("Time between these RPMs (s):", min_value=0.01)
-coast_minutes = st.number_input("(Optional) Coast-down time in minutes:", min_value=0.0, step=0.1)
-if coast_minutes:
-    st.write(f"→ That equals `{minutes_to_seconds(coast_minutes):.2f}` seconds")
+col_time_3, col_time_4 = st.columns([1, 2])
+with col_time_3:
+    coast_time_unit = st.radio("Time unit", ["Seconds", "Minutes"], horizontal=False, label_visibility="collapsed")
+with col_time_4:
+    if coast_time_unit == "Minutes":
+        coast_minutes = st.number_input("Coast-down time (min):", min_value=0.0, step=0.1)
+        coast_time_s = minutes_to_seconds(coast_minutes)
+    else:
+        coast_time_s = st.number_input("Coast-down time (sec):", min_value=0.01)
 
 if st.button("✅ Calculate"):
     try:
@@ -124,5 +134,6 @@ if st.button("✅ Calculate"):
 
     except Exception as e:
         st.error(f"Error during calculation: {e}")
+
 
 
