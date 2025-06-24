@@ -53,6 +53,9 @@ def calculate_correction_factor(T_f, I, alpha):
         return 1.0
     return 1 + (T_f / (I * alpha))
 
+def minutes_to_seconds(minutes):
+    return minutes * 60
+
 st.set_page_config(page_title="MOI & Friction Loss Tool", layout="centered")
 st.title("🔧 MOI & Friction Loss Calculator")
 st.caption("Use this tool to determine your system's moment of inertia and frictional power loss multiplier.")
@@ -75,6 +78,9 @@ with col1:
 with col2:
     drop_height = st.number_input("Vertical drop height ({}):".format("m" if use_metric else "ft"), min_value=0.0)
     fall_time_s = st.number_input("Time for drop (s):", min_value=0.01)
+    fall_minutes = st.number_input("(Optional) Drop time in minutes:", min_value=0.0, step=0.1)
+    if fall_minutes:
+        st.write(f"→ That equals `{minutes_to_seconds(fall_minutes):.2f}` seconds")
 
 st.header("② Coast-Down Test: Measure Frictional Loss")
 st.markdown("""
@@ -89,6 +95,9 @@ with col3:
 with col4:
     rpm2 = st.number_input("End RPM (after coast-down):", min_value=0.0)
 coast_time_s = st.number_input("Time between these RPMs (s):", min_value=0.01)
+coast_minutes = st.number_input("(Optional) Coast-down time in minutes:", min_value=0.0, step=0.1)
+if coast_minutes:
+    st.write(f"→ That equals `{minutes_to_seconds(coast_minutes):.2f}` seconds")
 
 if st.button("✅ Calculate"):
     try:
@@ -115,4 +124,5 @@ if st.button("✅ Calculate"):
 
     except Exception as e:
         st.error(f"Error during calculation: {e}")
+
 
