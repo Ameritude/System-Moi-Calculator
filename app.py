@@ -52,10 +52,11 @@ use_metric = unit_system == "Metric (SI)"
 st.header("① Drop Test: Measure Moment of Inertia")
 st.markdown("""
 **Instructions:**
-1. Attach a known mass to your rotating system with a string wound around a pulley (or drum).
+1. Attach a known mass to your rotating system with a string wound around a pulley (Make sure this pulley does not have a large inertia itself. plastic is best).
 2. Measure the radius from the center of rotation to the point where the string pulls.
 3. Measure how far the weight drops (vertical distance).
 4. Time how long it takes for the mass to fall this distance after release.
+5. Repeat this test atleast 3 times and use the averages for the values below
 """)
 col1, col2 = st.columns(2)
 with col1:
