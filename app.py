@@ -102,6 +102,9 @@ if st.button("✅ Calculate"):
         st.write(f"• Torque from Falling Mass: `{converted['Torque']:.3f} {converted['Torque Unit']}`")
         st.write(f"• Linear Acceleration: `{converted['Linear Acceleration']:.3f} m/s²`")
 
+        if converted['Linear Acceleration'] < 0.01:
+            st.warning("⚠️ The drop speed is too slow for reliable readings. Try increasing the mass or reducing the drop time.")
+
         st.subheader("📉 Coast-Down Results")
         st.write(f"• Angular Deceleration: `{alpha_f:.4f} rad/s²`")
         st.write(f"• Friction Torque: `{converted['Friction Torque']:.3f} {converted['Torque Unit']}`")
